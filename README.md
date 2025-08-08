@@ -1,44 +1,52 @@
-AI Chat Assistant
-A modern, full-featured AI chat application built with Next.js that supports both text generation and image creation. Features include user authentication, persistent chat sessions, and a sleek dark-themed interface.
-🚀 Features
+# 🤖 AI Chat Assistant
 
-Dual AI Capabilities: Text generation via OpenRouter and image generation via Stability AI
-User Authentication: Secure login system powered by Auth0
-Persistent Chat Sessions: Store and manage multiple chat conversations
-Real-time Interface: Smooth, responsive chat experience with loading states
-Modern UI: Clean, GitHub-inspired dark theme with Bootstrap styling
-Session Management: Create, switch between, and manage multiple chat sessions
-Image Support: Generate and display AI-created images inline with text
-Type Safety: Full TypeScript implementation with tRPC for end-to-end type safety
+A **modern, full-featured AI chat app** built with **Next.js** that supports both text generation and image creation.  
+Packed with **user authentication**, **persistent chat sessions**, and a **sleek dark-themed interface**.
 
-🛠️ Tech Stack
+---
 
-Frontend: Next.js 14, React, TypeScript, Bootstrap 5
-Backend: tRPC, Next.js API Routes
-Authentication: Auth0
-Database: Supabase (PostgreSQL)
-AI Services:
+## 🚀 Features
+- 🧠 **Dual AI Modes**:  
+  - Text generation via **OpenRouter** (Gemma model)  
+  - Image generation via **Stability AI** (SDXL)  
+- 🔐 **User Authentication** with Auth0  
+- 💾 **Persistent Chat Sessions** stored in Supabase  
+- ⚡ **Real-time Interface** with smooth updates & loading states  
+- 🎨 **Modern UI** with GitHub-inspired dark theme  
+- 🗂 **Session Management**: create, switch, and manage chats easily  
+- 🖼 **Inline Image Support** in conversations  
+- 🛡 **Full TypeScript + tRPC** for end-to-end type safety  
 
-OpenRouter (Text generation with Gemma model)
-Stability AI (Image generation with SDXL)
+---
 
+## 🛠 Tech Stack
+**Frontend:** Next.js 14, React, TypeScript, Bootstrap 5  
+**Backend:** tRPC, Next.js API Routes  
+**Auth:** Auth0  
+**Database:** Supabase (PostgreSQL)  
+**AI APIs:**  
+- OpenRouter (Gemma Model - Text)  
+- Stability AI (SDXL - Image)  
+**State Management:** TanStack Query (React Query)  
+**Styling:** Bootstrap 5 + custom dark theme  
 
-State Management: TanStack Query (React Query)
-Styling: Bootstrap 5 with custom dark theme
+---
 
-📋 Prerequisites
-Before running this application, make sure you have:
+## 📋 Prerequisites
+Before running, make sure you have:
+- Node.js **v18+**
+- npm or yarn
+- Auth0 account
+- Supabase project
+- OpenRouter API key
+- Stability AI API key
 
-Node.js 18+ installed
-npm or yarn package manager
-Auth0 account and application configured
-Supabase project with database tables set up
-OpenRouter API key
-Stability AI API key
+---
 
-🔧 Environment Variables
-Create a .env.local file in the root directory with the following variables:
-bash# Auth0 Configuration
+## 🔧 Environment Variables
+Create a `.env.local` file in the root:
+```env
+# Auth0 Configuration
 AUTH0_SECRET=your_auth0_secret
 AUTH0_BASE_URL=http://localhost:3000
 AUTH0_ISSUER_BASE_URL=https://your-domain.auth0.com
@@ -49,21 +57,28 @@ AUTH0_CLIENT_SECRET=your_auth0_client_secret
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# AI Service API Keys
+# AI Keys
 OPENROUTER_API_KEY=your_openrouter_api_key
 STABILITY_API_KEY=your_stability_ai_api_key
-🗄️ Database Schema
-Set up the following tables in your Supabase database:
+
+🗄 Database Schema
 chat_sessions table
-sqlCREATE TABLE chat_sessions (
+
+CREATE TABLE chat_sessions (
   id BIGSERIAL PRIMARY KEY,
   session_id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL,
   title TEXT DEFAULT 'New Chat',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+CREATE INDEX idx_chat_sessions_user_id ON chat_sessions(user_id);
+
 messages table
-sqlCREATE TABLE messages (
+
+sql
+Copy
+Edit
+CREATE TABLE messages (
   id BIGSERIAL PRIMARY KEY,
   user_id TEXT NOT NULL,
   session_id UUID NOT NULL REFERENCES chat_sessions(session_id),
@@ -72,117 +87,110 @@ sqlCREATE TABLE messages (
   image TEXT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-Indexes for performance
-sqlCREATE INDEX idx_chat_sessions_user_id ON chat_sessions(user_id);
 CREATE INDEX idx_messages_session_id ON messages(session_id);
 CREATE INDEX idx_messages_user_id ON messages(user_id);
-🚀 Installation & Setup
 
-Clone the repository
+📦 Installation & Setup
+1️⃣ Clone the repo
 
-bashgit clone <your-repo-url>
+bash
+Copy
+Edit
+git clone <your-repo-url>
 cd ai-chat-assistant
+2️⃣ Install dependencies
 
-Install dependencies
-
-bashnpm install
+bash
+Copy
+Edit
+npm install
 # or
 yarn install
+3️⃣ Set up env variables
 
-Set up environment variables
+bash
+Copy
+Edit
+cp .env.example .env.local
+Fill in your actual keys.
 
-bashcp .env.example .env.local
-# Edit .env.local with your actual values
+4️⃣ Run dev server
 
-Configure Auth0
-
-Create a new application in Auth0 dashboard
-Set the callback URL to http://localhost:3000/api/auth/callback
-Set logout URL to http://localhost:3000
-Add your domain to allowed origins
-
-
-Set up Supabase
-
-Create a new Supabase project
-Run the database schema SQL commands above
-Get your project URL and anon key from settings
-
-
-Get API Keys
-
-Sign up for OpenRouter and get your API key
-Sign up for Stability AI and get your API key
-
-
-Run the development server
-
-bashnpm run dev
+bash
+Copy
+Edit
+npm run dev
 # or
 yarn dev
+App runs at → http://localhost:3000
 
-Open your browser
-Navigate to http://localhost:3000
-
-🏗️ Project Structure
-├── app/
-│   ├── api/
-│   │   ├── auth/[...auth0]/    # Auth0 authentication endpoints
-│   │   └── trpc/               # tRPC API routes
-│   ├── components/             # React components
-│   │   └── ChatSidebar.tsx    # Chat session sidebar
-│   ├── trpc/                  # tRPC configuration
-│   │   ├── client.ts          # tRPC client setup
-│   │   └── router.ts          # API route definitions
-│   ├── ClientProviders.tsx    # Client-side providers wrapper
-│   ├── layout.tsx             # Root layout component
-│   ├── page.tsx               # Main chat interface
-│   ├── supabaseClient.ts      # Supabase client configuration
-│   └── globals.css            # Global styles
-├── public/                    # Static assets
-└── package.json              # Dependencies and scripts
+🏗 Project Structure
+python
+Copy
+Edit
+app/
+ ├── api/
+ │   ├── auth/[...auth0]/     # Auth0 endpoints
+ │   └── trpc/                # tRPC API routes
+ ├── components/              # UI components (ChatSidebar, etc.)
+ ├── trpc/                    # tRPC config
+ ├── ClientProviders.tsx      # Context providers
+ ├── layout.tsx               # Root layout
+ ├── page.tsx                 # Main chat interface
+ ├── supabaseClient.ts        # Supabase config
+ └── globals.css              # Styles
 🔌 API Endpoints
-The application uses tRPC for type-safe API communication:
+tRPC is used for type-safe backend calls:
 
-hello: Simple greeting endpoint for testing
-generateText: Text generation using OpenRouter's Gemma model
-generateImage: Image generation using Stability AI's SDXL model
+hello → Test endpoint
+
+generateText → Generate text with OpenRouter (Gemma)
+
+generateImage → Generate images with Stability AI (SDXL)
 
 🎨 Features in Detail
-Text Generation
+📝 Text Generation
+Powered by Gemma via OpenRouter
 
-Uses Google's Gemma model via OpenRouter
-Supports multi-turn conversations
-Real-time streaming responses
-Error handling and fallbacks
+Multi-turn conversations
 
-Image Generation
+Streaming responses
 
-Powered by Stability AI's SDXL model
-1024x1024 high-quality images
-Base64 encoded for immediate display
-Configurable parameters (steps, CFG scale, etc.)
+Error fallback
 
-Session Management
+🖼 Image Generation
+SDXL via Stability AI
 
-Create unlimited chat sessions
-Automatic session title generation
-Persistent storage in Supabase
-Switch between sessions seamlessly
+1024×1024 resolution
 
-User Interface
+Base64 inline display
 
-Responsive design works on all devices
-Dark theme with GitHub-inspired colors
-Smooth animations and transitions
-Keyboard shortcuts (Shift+Enter for new lines)
-Auto-expanding text input
-Loading states and error handling
+📑 Session Management
+Unlimited sessions
 
-🔒 Security Features
+Auto-title generation
 
-Authentication: Secure user authentication via Auth0
-Authorization: User-specific data isolation
-API Keys: Server-side API key management
-Input Validation: Zod schema validation for all inputs
-Error Handling: Comprehensive error boundaries
+Stored in Supabase
+
+💻 UI/UX
+Mobile-first, responsive
+
+Dark theme
+
+Auto-scroll to latest
+
+Keyboard shortcuts (Shift+Enter for newline)
+
+🔒 Security
+Auth0 authentication
+
+User-specific data isolation
+
+Server-side API key storage
+
+Zod validation on inputs
+
+📜 License
+MIT License — feel free to use and modify.
+
+👤 Author: Sourav Singh
