@@ -24,6 +24,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // All useRef hooks
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -68,6 +69,18 @@ export default function Home() {
     fetchMessages();
   }, [user?.sub, activeSessionId]);
 
+  // Close mobile sidebar when clicking outside or on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isMobileSidebarOpen) {
+        setIsMobileSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMobileSidebarOpen]);
+
   // ------------- AUTH WALL -------------
   if (authLoading) {
     return (
@@ -89,7 +102,7 @@ export default function Home() {
   if (!user) {
     return (
       <div
-        className="vh-100 d-flex align-items-center justify-content-center"
+        className="vh-100 d-flex align-items-center justify-content-center p-3"
         style={{ backgroundColor: "#0d1117" }}
       >
         <div className="text-center">
@@ -97,12 +110,14 @@ export default function Home() {
             className="bi bi-robot mb-4"
             style={{ fontSize: "4rem", color: "#238636" }}
           />
-          <h2 className="mb-4 text-white fw-semibold">Welcome to AI Chat</h2>
+          <h2 className="mb-4 text-white fw-semibold" style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)" }}>
+            Welcome to AI Chat
+          </h2>
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             href="/api/auth/login"
-            className="btn btn-primary btn-lg d-inline-flex align-items-center gap-2 px-4 py-2"
-            style={{ borderRadius: "8px", fontWeight: 500 }}
+            className="btn btn-primary btn-lg d-inline-flex align-items-center gap-2 px-4 py-3"
+            style={{ borderRadius: "8px", fontWeight: 500, fontSize: "1rem" }}
           >
             <i className="bi bi-box-arrow-in-right" />
             Sign in with Auth0
@@ -238,16 +253,53 @@ export default function Home() {
           setActiveSessionId(id);
         }}
         activeSessionId={activeSessionId}
+        isMobileOpen={isMobileSidebarOpen}
+        onMobileClose={() => setIsMobileSidebarOpen(false)}
       />
 
       {/* Main Chat Area */}
-      <div className="flex-grow-1 d-flex flex-column">
+      <div 
+        className="flex-grow-1 d-flex flex-column"
+        style={{
+          marginLeft: window.innerWidth >= 768 ? "320px" : "0",
+          transition: "margin-left 0.3s ease-in-out",
+        }}
+      >
         {/* Header */}
         <div
-          className="text-white px-4 py-3 d-flex align-items-center shadow-sm border-bottom"
-          style={{ backgroundColor: "#161b22", borderBottomColor: "#30363d" }}
+          className="text-white d-flex align-items-center shadow-sm border-bottom"
+          style={{ 
+            backgroundColor: "#161b22", 
+            borderBottomColor: "#30363d",
+            padding: "0.75rem 1rem",
+          }}
         >
           <div className="d-flex align-items-center me-auto">
+            {/* Mobile Menu Button */}
+            <button
+              className="btn btn-sm d-md-none me-2 d-flex align-items-center justify-content-center"
+              onClick={() => setIsMobileSidebarOpen(true)}
+              style={{
+                backgroundColor: "transparent",
+                border: "1px solid #30363d",
+                color: "#8b949e",
+                width: "32px",
+                height: "32px",
+                borderRadius: "6px",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#21262d";
+                e.currentTarget.style.color = "#f0f6fc";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = "#8b949e";
+              }}
+              title="Open menu"
+            >
+              <i className="bi bi-list" style={{ fontSize: "16px" }} />
+            </button>
+
             <div
               className="rounded-circle me-3 d-flex align-items-center justify-content-center"
               style={{
@@ -260,13 +312,19 @@ export default function Home() {
             >
               <i className="bi bi-chat-dots-fill text-white" />
             </div>
-            <h5 className="mb-0 fw-semibold" style={{ color: "#f0f6fc" }}>
+            <h5 
+              className="mb-0 fw-semibold" 
+              style={{ 
+                color: "#f0f6fc",
+                fontSize: window.innerWidth < 768 ? "1rem" : "1.25rem"
+              }}
+            >
               AI Chat Assistant
             </h5>
           </div>
           <div className="d-flex gap-2">
             <button
-              className="btn btn-sm d-none d-md-inline-flex align-items-center gap-2"
+              className="btn btn-sm d-none d-lg-inline-flex align-items-center gap-2"
               style={{
                 backgroundColor: "transparent",
                 border: "1px solid #30363d",
@@ -286,7 +344,7 @@ export default function Home() {
               <i className="bi bi-gear" style={{ fontSize: "14px" }} />
             </button>
             <button
-              className="btn btn-sm d-flex align-items-center justify-content-center"
+              className="btn btn-sm d-none d-md-flex align-items-center justify-content-center"
               style={{
                 backgroundColor: "transparent",
                 border: "1px solid #30363d",
@@ -312,27 +370,45 @@ export default function Home() {
 
         {/* Chat Messages */}
         <div
-          className="flex-grow-1 overflow-auto px-4 py-4"
-          style={{ backgroundColor: "#0d1117" }}
+          className="flex-grow-1 overflow-auto"
+          style={{ 
+            backgroundColor: "#0d1117",
+            padding: window.innerWidth < 768 ? "1rem 0.75rem" : "1.5rem 1rem"
+          }}
         >
-          <div className="mx-auto" style={{ maxWidth: "800px" }}>
+          <div 
+            className="mx-auto" 
+            style={{ 
+              maxWidth: window.innerWidth < 768 ? "100%" : "800px",
+              width: "100%"
+            }}
+          >
             {messages.length === 0 && (
               <div className="text-center py-5">
                 <div
                   className="rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center"
                   style={{
-                    width: "80px",
-                    height: "80px",
+                    width: window.innerWidth < 768 ? "64px" : "80px",
+                    height: window.innerWidth < 768 ? "64px" : "80px",
                     backgroundColor: "#238636",
-                    fontSize: "32px",
+                    fontSize: window.innerWidth < 768 ? "24px" : "32px",
                   }}
                 >
                   <i className="bi bi-robot text-white" />
                 </div>
-                <h3 className="mb-3" style={{ color: "#f0f6fc" }}>
+                <h3 
+                  className="mb-3" 
+                  style={{ 
+                    color: "#f0f6fc",
+                    fontSize: window.innerWidth < 768 ? "1.25rem" : "1.5rem"
+                  }}
+                >
                   How can I help you today?
                 </h3>
-                <p className="text-muted mb-0">
+                <p 
+                  className="text-muted mb-0"
+                  style={{ fontSize: window.innerWidth < 768 ? "0.9rem" : "1rem" }}
+                >
                   Start a conversation with your AI assistant
                 </p>
               </div>
@@ -347,31 +423,32 @@ export default function Home() {
               >
                 {msg.role === "assistant" && (
                   <div
-                    className="rounded-circle me-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                    className="rounded-circle me-2 me-md-3 d-flex align-items-center justify-content-center flex-shrink-0"
                     style={{
-                      width: "32px",
-                      height: "32px",
+                      width: window.innerWidth < 768 ? "28px" : "32px",
+                      height: window.innerWidth < 768 ? "28px" : "32px",
                       backgroundColor: "#238636",
                       marginTop: "4px",
                     }}
                   >
                     <i
                       className="bi bi-robot text-white"
-                      style={{ fontSize: "14px" }}
+                      style={{ fontSize: window.innerWidth < 768 ? "12px" : "14px" }}
                       aria-label="AI assistant"
                       title="AI assistant"
                     />
                   </div>
                 )}
                 <div
-                  className="px-4 py-3 rounded-4 position-relative text-white"
+                  className="rounded-4 position-relative text-white"
                   style={{
-                    maxWidth: "75%",
+                    maxWidth: window.innerWidth < 768 ? "85%" : "75%",
                     wordBreak: "break-word",
                     backgroundColor: msg.role === "user" ? "#0969da" : "#161b22",
                     border: msg.role === "assistant" ? "1px solid #30363d" : "none",
-                    fontSize: "15px",
+                    fontSize: window.innerWidth < 768 ? "14px" : "15px",
                     lineHeight: "1.5",
+                    padding: window.innerWidth < 768 ? "0.75rem 1rem" : "1rem 1.5rem",
                   }}
                 >
                   {msg.content && (
@@ -386,27 +463,32 @@ export default function Home() {
                       <Image
                         src={msg.image}
                         alt="Generated"
-                        width={400}
-                        height={400}
+                        width={window.innerWidth < 768 ? 300 : 400}
+                        height={window.innerWidth < 768 ? 300 : 400}
                         className="rounded-3 shadow-sm"
-                        style={{ maxHeight: "400px", border: "1px solid #30363d" }}
+                        style={{ 
+                          maxHeight: window.innerWidth < 768 ? "300px" : "400px",
+                          width: "100%",
+                          height: "auto",
+                          border: "1px solid #30363d" 
+                        }}
                       />
                     </div>
                   )}
                 </div>
                 {msg.role === "user" && (
                   <div
-                    className="rounded-circle ms-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                    className="rounded-circle ms-2 ms-md-3 d-flex align-items-center justify-content-center flex-shrink-0"
                     style={{
-                      width: "32px",
-                      height: "32px",
+                      width: window.innerWidth < 768 ? "28px" : "32px",
+                      height: window.innerWidth < 768 ? "28px" : "32px",
                       backgroundColor: "#6f42c1",
                       marginTop: "4px",
                     }}
                   >
                     <i
                       className="bi bi-person-fill text-white"
-                      style={{ fontSize: "14px" }}
+                      style={{ fontSize: window.innerWidth < 768 ? "12px" : "14px" }}
                       aria-label="User"
                       title="User"
                     />
@@ -418,28 +500,29 @@ export default function Home() {
             {(isLoading || isImageLoading) && (
               <div className="d-flex mb-4 justify-content-start">
                 <div
-                  className="rounded-circle me-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                  className="rounded-circle me-2 me-md-3 d-flex align-items-center justify-content-center flex-shrink-0"
                   style={{
-                    width: "32px",
-                    height: "32px",
+                    width: window.innerWidth < 768 ? "28px" : "32px",
+                    height: window.innerWidth < 768 ? "28px" : "32px",
                     backgroundColor: "#238636",
                     marginTop: "4px",
                   }}
                 >
                   <i
                     className="bi bi-robot text-white"
-                    style={{ fontSize: "14px" }}
+                    style={{ fontSize: window.innerWidth < 768 ? "12px" : "14px" }}
                     aria-label="AI assistant loading"
                     title="AI assistant loading"
                   />
                 </div>
                 <div
-                  className="px-4 py-3 rounded-4 d-flex align-items-center gap-3"
+                  className="rounded-4 d-flex align-items-center gap-3"
                   style={{
-                    maxWidth: "75%",
+                    maxWidth: window.innerWidth < 768 ? "85%" : "75%",
                     backgroundColor: "#161b22",
                     border: "1px solid #30363d",
-                    fontSize: "15px",
+                    fontSize: window.innerWidth < 768 ? "14px" : "15px",
+                    padding: window.innerWidth < 768 ? "0.75rem 1rem" : "1rem 1.5rem",
                   }}
                 >
                   <div
@@ -461,8 +544,12 @@ export default function Home() {
 
         {/* Input Bar */}
         <div
-          className="p-4 border-top"
-          style={{ backgroundColor: "#0d1117", borderTopColor: "#30363d" }}
+          className="border-top"
+          style={{ 
+            backgroundColor: "#0d1117", 
+            borderTopColor: "#30363d",
+            padding: window.innerWidth < 768 ? "1rem 0.75rem" : "1.5rem 1rem"
+          }}
         >
           <style jsx>{`
             .custom-textarea::placeholder {
@@ -473,15 +560,19 @@ export default function Home() {
           <form
             onSubmit={handleSend}
             className="mx-auto"
-            style={{ maxWidth: "800px" }}
+            style={{ 
+              maxWidth: window.innerWidth < 768 ? "100%" : "800px",
+              width: "100%"
+            }}
           >
             <div className="position-relative">
               <div
-                className="rounded-4 p-3 d-flex align-items-end gap-3"
+                className="rounded-4 d-flex align-items-end gap-2 gap-md-3"
                 style={{
                   backgroundColor: "#161b22",
                   border: "2px solid #30363d",
                   transition: "border-color 0.15s ease-in-out",
+                  padding: window.innerWidth < 768 ? "0.75rem" : "1rem",
                 }}
                 onFocus={(e) => (e.currentTarget.style.borderColor = "#0969da")}
                 onBlur={(e) => (e.currentTarget.style.borderColor = "#30363d")}
@@ -503,7 +594,7 @@ export default function Home() {
                     backgroundColor: "transparent",
                     color: "#f0f6fc",
                     resize: "none",
-                    fontSize: "15px",
+                    fontSize: window.innerWidth < 768 ? "14px" : "15px",
                     minHeight: "24px",
                     maxHeight: "120px",
                   }}
@@ -519,7 +610,7 @@ export default function Home() {
                     onClick={handleImageGen}
                     disabled={isLoading || isImageLoading || !input.trim()}
                     title="Generate an image from your text description"
-                    className="btn d-flex align-items-center justify-content-center gap-2 px-3 py-2"
+                    className="btn d-flex align-items-center justify-content-center gap-1 gap-md-2"
                     style={{
                       backgroundColor:
                         input.trim() && !isLoading && !isImageLoading
@@ -527,7 +618,7 @@ export default function Home() {
                           : "#30363d",
                       border: "none",
                       borderRadius: "8px",
-                      minWidth: "90px",
+                      minWidth: window.innerWidth < 768 ? "36px" : "90px",
                       height: "36px",
                       color:
                         input.trim() && !isLoading && !isImageLoading
@@ -535,16 +626,17 @@ export default function Home() {
                           : "#8b949e",
                       fontSize: "13px",
                       fontWeight: "500",
+                      padding: window.innerWidth < 768 ? "0.5rem" : "0.5rem 0.75rem",
                     }}
                   >
                     <i className="bi bi-image" style={{ fontSize: "14px" }} />
-                    <span className="d-none d-sm-inline">Image</span>
+                    <span className="d-none d-md-inline">Image</span>
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading || isImageLoading || !input.trim()}
                     title="Send your message"
-                    className="btn d-flex align-items-center justify-content-center gap-2 px-3 py-2"
+                    className="btn d-flex align-items-center justify-content-center gap-1 gap-md-2"
                     style={{
                       backgroundColor:
                         input.trim() && !isLoading && !isImageLoading
@@ -552,7 +644,7 @@ export default function Home() {
                           : "#30363d",
                       border: "none",
                       borderRadius: "8px",
-                      minWidth: "80px",
+                      minWidth: window.innerWidth < 768 ? "36px" : "80px",
                       height: "36px",
                       color:
                         input.trim() && !isLoading && !isImageLoading
@@ -560,33 +652,53 @@ export default function Home() {
                           : "#8b949e",
                       fontSize: "13px",
                       fontWeight: "500",
+                      padding: window.innerWidth < 768 ? "0.5rem" : "0.5rem 0.75rem",
                     }}
                   >
                     <i className="bi bi-send-fill" style={{ fontSize: "14px" }} />
-                    <span className="d-none d-sm-inline">Send</span>
+                    <span className="d-none d-md-inline">Send</span>
                   </button>
                 </div>
               </div>
             </div>
-            <div className="d-flex justify-content-between align-items-center mt-2 px-1">
-              <small style={{ color: "#8b949e", fontSize: "13px" }}>
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mt-2 px-1 gap-1 gap-md-0">
+              <small 
+                style={{ 
+                  color: "#8b949e", 
+                  fontSize: window.innerWidth < 768 ? "11px" : "13px"
+                }}
+              >
                 Press{" "}
                 <kbd
-                  className="px-2 py-1 rounded"
-                  style={{ backgroundColor: "#21262d", color: "#f0f6fc", fontSize: "12px" }}
+                  className="px-1 px-md-2 py-1 rounded"
+                  style={{ 
+                    backgroundColor: "#21262d", 
+                    color: "#f0f6fc", 
+                    fontSize: window.innerWidth < 768 ? "10px" : "12px"
+                  }}
                 >
                   Shift
                 </kbd>{" "}
                 +{" "}
                 <kbd
-                  className="px-2 py-1 rounded"
-                  style={{ backgroundColor: "#21262d", color: "#f0f6fc", fontSize: "12px" }}
+                  className="px-1 px-md-2 py-1 rounded"
+                  style={{ 
+                    backgroundColor: "#21262d", 
+                    color: "#f0f6fc", 
+                    fontSize: window.innerWidth < 768 ? "10px" : "12px"
+                  }}
                 >
                   Enter
                 </kbd>{" "}
                 for a new line
               </small>
-              <small style={{ color: "#8b949e", fontSize: "13px" }}>
+              <small 
+                style={{ 
+                  color: "#8b949e", 
+                  fontSize: window.innerWidth < 768 ? "11px" : "13px",
+                  textAlign: window.innerWidth < 768 ? "left" : "right"
+                }}
+              >
                 AI can make mistakes. Verify important information.
               </small>
             </div>
