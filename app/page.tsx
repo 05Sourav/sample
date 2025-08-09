@@ -406,7 +406,7 @@ export default function Home() {
                   How can I help you today?
                 </h3>
                 <p 
-                  className="text-muted mb-0"
+                  className="text-secondary mb-0"
                   style={{ fontSize: window.innerWidth < 768 ? "0.9rem" : "1rem" }}
                 >
                   Start a conversation with your AI assistant
@@ -618,7 +618,8 @@ export default function Home() {
                           : "#30363d",
                       border: "none",
                       borderRadius: "8px",
-                      minWidth: window.innerWidth < 768 ? "36px" : "90px",
+                      minWidth: "44px",
+                      width: window.innerWidth < 768 ? "44px" : "90px",
                       height: "36px",
                       color:
                         input.trim() && !isLoading && !isImageLoading
@@ -629,7 +630,7 @@ export default function Home() {
                       padding: window.innerWidth < 768 ? "0.5rem" : "0.5rem 0.75rem",
                     }}
                   >
-                    <i className="bi bi-image" style={{ fontSize: "14px" }} />
+                    <i className="bi bi-image" style={{ fontSize: "16px" }} />
                     <span className="d-none d-md-inline">Image</span>
                   </button>
                   <button
@@ -644,7 +645,8 @@ export default function Home() {
                           : "#30363d",
                       border: "none",
                       borderRadius: "8px",
-                      minWidth: window.innerWidth < 768 ? "36px" : "80px",
+                      minWidth: "44px",
+                      width: window.innerWidth < 768 ? "44px" : "80px",
                       height: "36px",
                       color:
                         input.trim() && !isLoading && !isImageLoading
@@ -655,7 +657,7 @@ export default function Home() {
                       padding: window.innerWidth < 768 ? "0.5rem" : "0.5rem 0.75rem",
                     }}
                   >
-                    <i className="bi bi-send-fill" style={{ fontSize: "14px" }} />
+                    <i className="bi bi-send-fill" style={{ fontSize: "16px" }} />
                     <span className="d-none d-md-inline">Send</span>
                   </button>
                 </div>
