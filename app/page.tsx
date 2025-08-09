@@ -618,20 +618,19 @@ export default function Home() {
                           : "#30363d",
                       border: "none",
                       borderRadius: "8px",
-                      minWidth: "44px",
-                      width: window.innerWidth < 768 ? "44px" : "90px",
+                      minWidth: window.innerWidth < 768 ? "70px" : "90px",
                       height: "36px",
                       color:
                         input.trim() && !isLoading && !isImageLoading
                           ? "#fff"
                           : "#8b949e",
-                      fontSize: "13px",
+                      fontSize: window.innerWidth < 768 ? "12px" : "13px",
                       fontWeight: "500",
-                      padding: window.innerWidth < 768 ? "0.5rem" : "0.5rem 0.75rem",
+                      padding: window.innerWidth < 768 ? "0.5rem 0.25rem" : "0.5rem 0.75rem",
                     }}
                   >
-                    <i className="bi bi-image" style={{ fontSize: "16px" }} />
-                    <span className="d-none d-md-inline">Image</span>
+                    <i className="bi bi-image" style={{ fontSize: window.innerWidth < 768 ? "14px" : "16px" }} />
+                    <span>Image</span>
                   </button>
                   <button
                     type="submit"
@@ -645,20 +644,19 @@ export default function Home() {
                           : "#30363d",
                       border: "none",
                       borderRadius: "8px",
-                      minWidth: "44px",
-                      width: window.innerWidth < 768 ? "44px" : "80px",
+                      minWidth: window.innerWidth < 768 ? "65px" : "80px",
                       height: "36px",
                       color:
                         input.trim() && !isLoading && !isImageLoading
                           ? "#fff"
                           : "#8b949e",
-                      fontSize: "13px",
+                      fontSize: window.innerWidth < 768 ? "12px" : "13px",
                       fontWeight: "500",
-                      padding: window.innerWidth < 768 ? "0.5rem" : "0.5rem 0.75rem",
+                      padding: window.innerWidth < 768 ? "0.5rem 0.25rem" : "0.5rem 0.75rem",
                     }}
                   >
-                    <i className="bi bi-send-fill" style={{ fontSize: "16px" }} />
-                    <span className="d-none d-md-inline">Send</span>
+                    <i className="bi bi-send-fill" style={{ fontSize: window.innerWidth < 768 ? "14px" : "16px" }} />
+                    <span>Send</span>
                   </button>
                 </div>
               </div>
