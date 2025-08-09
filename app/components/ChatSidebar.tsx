@@ -336,7 +336,8 @@ export default function ChatSidebar({
                     lineHeight: "1.4",
                   }}
                 >
-                  Start your first chat by clicking the &quot;New Chat&quot; button above
+                  Start your first chat by clicking the &quot;New Chat&quot;
+                  button above
                 </p>
               </div>
             )}
@@ -414,64 +415,60 @@ export default function ChatSidebar({
               </button>
 
               {/* Logout */}
-              <Link href="/api/auth/logout" passHref legacyBehavior>
-                <a
-                  className="btn btn-sm d-flex align-items-center justify-content-center p-1"
-                  style={{
-                    backgroundColor: "transparent",
-                    border: "1px solid #30363d",
-                    color: "#8b949e",
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "6px",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#da3633";
-                    e.currentTarget.style.color = "#fff";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = "#8b949e";
-                  }}
-                  title="Log out"
-                >
-                  <i
-                    className="bi bi-box-arrow-right"
-                    style={{ fontSize: "12px" }}
-                  />
-                </a>
-              </Link>
-            </>
-          )}
-
-          {/* Collapsed mode: single logout icon */}
-          {isCollapsed && (
-            <Link href="/api/auth/logout" passHref legacyBehavior>
-              <a
+              <Link
+                href="/api/auth/logout"
                 className="btn btn-sm d-flex align-items-center justify-content-center p-1"
                 style={{
-                  backgroundColor: "transparent",
-                  border: "none",
-                  color: "#8b949e",
-                  width: "28px",
-                  height: "28px",
-                  borderRadius: "50%",
+                  backgroundColor: "rgba(218, 54, 51, 0.1)", // light red background for visibility
+                  border: "1px solid #da3633", // red border to match hover color
+                  color: "#da3633", // red icon color by default
+                  width: "24px",
+                  height: "24px",
+                  borderRadius: "6px",
+                  transition: "background-color 0.3s, color 0.3s",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = "#da3633";
                   e.currentTarget.style.color = "#fff";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = "#8b949e";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(218, 54, 51, 0.1)";
+                  e.currentTarget.style.color = "#da3633";
                 }}
                 title="Log out"
               >
-                <i
-                  className="bi bi-box-arrow-right"
-                  style={{ fontSize: "14px" }}
-                />
-              </a>
+                <i className="bi bi-power" style={{ fontSize: "12px" }} />
+              </Link>
+            </>
+          )}
+
+          {/* Collapsed mode: single logout icon */}
+          {isCollapsed && (
+            <Link
+              href="/api/auth/logout"
+              className="btn btn-sm d-flex align-items-center justify-content-center p-1"
+              style={{
+                backgroundColor: "rgba(218, 54, 51, 0.1)", // light red bg
+                border: "none",
+                color: "#da3633",
+                width: "28px",
+                height: "28px",
+                borderRadius: "50%",
+                transition: "background-color 0.3s, color 0.3s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#da3633";
+                e.currentTarget.style.color = "#fff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor =
+                  "rgba(218, 54, 51, 0.1)";
+                e.currentTarget.style.color = "#da3633";
+              }}
+              title="Log out"
+            >
+              <i className="bi bi-power" style={{ fontSize: "14px" }} />
             </Link>
           )}
         </div>
